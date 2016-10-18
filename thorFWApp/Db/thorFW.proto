@@ -1,0 +1,19 @@
+
+InTerminator="\r\000>";
+OutTerminator=CR;
+ExtraInput=Ignore;
+#ReplyTimeout=3000;
+ReadTimeout=1500;
+
+idn           { out "*idn?"             ;in "*idn?\r\000%60c"        ; }
+getPosCnt     { out "pcount?"           ;in "pcount?\r\000%i"        ; }
+getPos        { out "pos?"              ;in "pos?\r\000%i"           ; }
+getTrigMode   { out "trig?"             ;in "trig?\r\000%{0|1}"      ; }
+getSpeedMode  { out "speed?"            ;in "speed?\r\000%{0|1}"     ; }
+getSensorMode { out "sensors?"          ;in "sensors?\r\000%{0|1}"   ; }
+
+setPos        { out "pos=%i"            ;in "pos=%i"                 ; }
+setTrigMode   { out "trig=%{0|1}"       ;in "trig=%{0|1}"            ; }
+setSpeedMode  { out "speed=%{0|1}"      ;in "speed=%{0|1}"           ; }
+setSensorMode { out "sensors=%{0|1}"    ;in "sensors=%{0|1}"         ; }
+save          { out "save"              ;in "save"                   ; }

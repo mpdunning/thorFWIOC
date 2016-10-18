@@ -1,0 +1,144 @@
+record( stringin, "$(P):IOCNAME") {
+  field( DESC, "$(DESC)")
+  field( VAL,  "$(IOCNAME)")
+}
+record( waveform, "$(P):IDN"){
+  field( DESC, "SCPI ID String")
+  field( DTYP, "stream")
+  field( NELM, "80")
+  field( FTVL, "CHAR")
+  field( INP,  "@$(PROTOFILE) idn $(L) $(A)")
+}
+record(longin,"$(P):POS:COUNT:RBV"){
+  field( DESC, "Filter wheel position count")
+  field( DTYP, "stream")
+  field( INP,  "@$(PROTOFILE) getPosCnt $(L) $(A)")
+}
+#--------------------------------------------------
+record(mbbo,"$(P):POS:SC"){
+  field( DESC, "Filter wheel position")
+  field( OUT,  "$(P):POS PP")
+  field( ZRVL,  "1")
+  field( ONVL,  "2")
+  field( TWVL,  "3")
+  field( THVL,  "4")
+  field( FRVL,  "5")
+  field( FVVL,  "6")
+  field( ZRST,  "Filter 1")
+  field( ONST,  "Filter 2")
+  field( TWST,  "Filter 3")
+  field( THST,  "Filter 4")
+  field( FRST,  "Filter 5")
+  field( FVST,  "Filter 6")
+}
+record(mbbo,"$(P):POS"){
+  field( SDIS, "$(P):POS:Sync.PACT")
+  field( DISV, "1")
+  field( DTYP, "stream")
+  field( OUT,  "@$(PROTOFILE) setPos $(L) $(A)")
+  field( ZRVL,  "1")
+  field( ONVL,  "2")
+  field( TWVL,  "3")
+  field( THVL,  "4")
+  field( FRVL,  "5")
+  field( FVVL,  "6")
+  field( ZRST,  "Filter 1")
+  field( ONST,  "Filter 2")
+  field( TWST,  "Filter 3")
+  field( THST,  "Filter 4")
+  field( FRST,  "Filter 5")
+  field( FVST,  "Filter 6")
+}
+record(mbbi,"$(P):POS:RBV"){
+  field( DESC, "Filter wheel position")
+  field( DTYP, "stream")
+  field( INP,  "@$(PROTOFILE) getPos $(L) $(A)")
+  field( ZRVL,  "1")
+  field( ONVL,  "2")
+  field( TWVL,  "3")
+  field( THVL,  "4")
+  field( FRVL,  "5")
+  field( FVVL,  "6")
+  field( FLNK, "$(P):POS:Sync.PROC")
+}
+record( mbbo, "$(P):POS:Sync"){
+  field( DOL,  "$(P):POS:RBV NPP")
+  field( OMSL, "closed_loop")
+  field( OUT,  "$(P):POS:SC PP")
+  field( ZRVL,  "1")
+  field( ONVL,  "2")
+  field( TWVL,  "3")
+  field( THVL,  "4")
+  field( FRVL,  "5")
+  field( FVVL,  "6")
+}
+#-------------------------------------------------
+record(bi,"$(P):TRIG:MODE:RBV"){
+  field( DESC, "Trigger mode RBV")
+  field( DTYP, "stream")
+  field( INP,  "@$(PROTOFILE) getTrigMode $(L) $(A)")
+  field( ZNAM, "External")
+  field( ONAM, "Internal")
+}
+record(bi,"$(P):SPEED:MODE:RBV"){
+  field( DESC, "Speed mode")
+  field( DTYP, "stream")
+  field( INP,  "@$(PROTOFILE) getSpeedMode $(L) $(A)")
+  field( ZNAM, "Slow")
+  field( ONAM, "Fast")
+}
+record(bi,"$(P):SENSOR:MODE:RBV"){
+  field( DESC, "Sensor mode")
+  field( DTYP, "stream")
+  field( INP,  "@$(PROTOFILE) getSensorMode $(L) $(A)")
+  field( ZNAM, "Off")
+  field( ONAM, "On")
+}
+record(bo,"$(P):SAVE"){
+  field( DESC, "Save settings to device")
+  field( DTYP, "stream")
+  field( OUT,  "@$(PROTOFILE) save $(L) $(A)")
+}
+record( calcout, "$(P):MOVL"){
+  field( DESC, "Move left by Increment")
+  field( EGU,  "")
+  field( INPA, "1")
+  field( INPB, "$(P):POS:RBV.VAL")
+  field( CALC, "B-A")
+  field( OUT,  "$(P):POS:SC PP")
+  field( LOPR,  "1")
+  field( HOPR,  "6")
+}
+record( calcout, "$(P):MOVR"){
+  field( DESC, "Move right by Increment")
+  field( EGU,  "")
+  field( INPA, "1")
+  field( INPB, "$(P):POS:RBV.VAL")
+  field( CALC, "B+A")
+  field( OUT,  "$(P):POS:SC PP")
+  field( LOPR,  "1")
+  field( HOPR,  "6")
+}
+# Init and read sequences ---------------------------
+record( seq, "$(P):SEQ0"){
+  field( DESC, "Initialization sequence")
+  field( LNK1, "$(P):IDN.PROC")
+  field( DLY1, "$(DELAY1)")
+  field( LNK2, "$(P):POS:COUNT:RBV.PROC")
+  field( DLY2, "$(DELAY1)")
+  field( LNK3, "$(P):SEQ1.PROC")
+  field( DLY3, "$(DELAY1)")
+  field( PINI, "YES")
+}
+record( seq, "$(P):SEQ1"){
+  field( DESC, "Read sequence")
+  field( LNK1, "$(P):POS:RBV.PROC")
+  field( DLY1, "$(DELAY1)")
+  field( LNK2, "$(P):TRIG:MODE:RBV.PROC")
+  field( DLY2, "$(DELAY1)")
+  field( LNK3, "$(P):SPEED:MODE:RBV.PROC")
+  field( DLY3, "$(DELAY1)")
+  field( LNK4, "$(P):SENSOR:MODE:RBV.PROC")
+  field( DLY4, "$(DELAY1)")
+  field( SCAN, "2 second")
+}
